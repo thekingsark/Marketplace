@@ -1,6 +1,6 @@
 'use client'
 
-import { firebaseConfig } from '@/firebase'
+import firebase from '@/firebase';
 import { initializeApp, getApps, FirebaseOptions } from 'firebase/app'
 import {
   FacebookAuthProvider,
