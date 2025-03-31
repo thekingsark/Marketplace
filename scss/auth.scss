@@ -1,0 +1,138 @@
+@use "./abstract" as *;
+
+.auth-card {
+	background: var(--background_4);
+	padding: 55px 80px 60px;
+	border-radius: 6px;
+	overflow: hidden;
+
+	@media #{$xs} {
+		padding: 55px 15px 60px;
+	}
+}
+
+.note {
+  line-height: 50px;
+  gap: 8px;
+
+  @media #{$sm,$xs} {
+    line-height: inherit;
+  }
+}
+
+.forgot-password {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	margin-bottom: 24px;
+}
+.forgot-password span:hover {
+	cursor: pointer;
+}
+.password-input button {
+	height: 60px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	right: 16px;
+	top: 28px;
+}
+html[dir='rtl'] .password-input button {
+	right: auto;
+	left: 16px;
+}
+.continue-with-social {
+	margin-bottom: 32px;
+	margin-top: 32px;
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+}
+.continue-with-label {
+	margin-bottom: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-direction: row;
+}
+.gradient-container {
+	height: 1px;
+	background: rgb(24, 31, 45);
+	background: linear-gradient(
+		90deg,
+		rgba(24, 31, 45, 1) 43%,
+		rgba(99, 99, 99, 1) 75%
+	);
+}
+html[dir='rtl'] .gradient-container {
+	transform: rotate(180deg);
+}
+
+.right-gradient-container {
+	transform: rotate(180deg);
+}
+html[dir='rtl'] .right-gradient-container {
+	transform: none;
+}
+.social-btn {
+	display: flex;
+	justify-content: space-around;
+}
+.loader-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.login-btn {
+	display: flex;
+	align-content: center;
+	gap: 20px;
+	flex-direction: column;
+	text-align: center;
+}
+.register-checkboxes {
+	margin-bottom: 16px;
+}
+.register-checkboxes:hover {
+	cursor: pointer;
+}
+.register-checkboxes input[type='checkbox'] {
+	border: 1px solid #86909d;
+	border-radius: 2px;
+	border-radius: 2px;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	width: 15px;
+	height: 15px;
+	cursor: pointer;
+	position: relative;
+	top: 2px;
+	font-size: 15px;
+	margin-right: 0;
+	min-width: 15px;
+}
+.register-checkboxes input[type='checkbox']:checked {
+	border: none;
+	background-color: #d94f30;
+	color: #ffffff;
+}
+.register-checkboxes input[type='checkbox']:checked::before {
+	position: absolute;
+	content: '✔';
+	line-height: 15px;
+	top: 0;
+	left: 3px;
+	font-size: 10px;
+}
+.register-link {
+	font-weight: 800;
+	color: var(--font_1);
+}
+.sign-up-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

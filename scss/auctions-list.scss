@@ -1,0 +1,111 @@
+@use './abstract' as *;
+
+.auctions-filter-item {
+  border-radius: 6px;
+  width: 25%;
+
+  @media #{$xs,$sm,$md} {
+    width: 100%;
+  }
+}
+
+.auction-filters-root {
+  display: flex;
+
+  @media #{$xs,$sm,$md} {
+    flex-direction: column;
+  }
+}
+
+.auctions-filter-count {
+  padding: 0 12px;
+  border-radius: 30px;
+  height: auto;
+  background: var(--background_3);
+  align-self: center;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--separator);
+
+  span {
+    height: 100%;
+    line-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    z-index: 1;
+    font-weight: 300;
+  }
+}
+
+.auctions-price-input-filter {
+  height: 45px;
+  border-radius: 6px;
+  background: var(--background_4);
+  border-color: var(--separator);
+  padding: 0 8px;
+  border: 1px solid var(--separator);
+  outline: none;
+
+  &:hover,
+  &:active,
+  &:focus {
+    border-color: var(--font_3);
+  }
+}
+
+.auctions-list-root {
+  min-height: 500px;
+}
+
+.saved-filters-root {
+  background: var(--background_4);
+  border-radius: 6px;
+  border: 1px solid var(--separator);
+
+  .saved-filters-title {
+    font-weight: 600;
+  }
+}
+
+.saved-filters-wrapper {
+  flex-wrap: wrap;
+}
+
+.saved-filter-item-card {
+  border: 1px solid var(--separator);
+  padding: 0 16px;
+  height: 45px;
+  background: var(--background_2);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.no-filters-message {
+  height: 45px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.save-filter-button-root {
+  height: 28px;
+  color: var(--clr-blue);
+  cursor: pointer;
+}
+
+.active-filter-item {
+  height: 40px;
+  border: 1px solid var(--separator);
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  justify-content: space-between;
+  width: auto;
+}
