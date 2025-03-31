@@ -1,0 +1,30 @@
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.icon.rotate {
+  transform: rotate(var(--rotate-deg));
+}
+
+.icon svg {
+  width: var(--size);
+  height: var(--size);
+}
+
+.icon svg:not([class*='stroke']) {
+  fill: var(--color) !important;
+}
+
+.icon.error svg:not([class*='stroke']) {
+  fill: var(--error-color) !important;
+}
+
+.icon svg:not([class*='stroke']) path {
+  fill-opacity: var(--fill-opacity, 1);
+}
+
+.icon svg [class*='stroke'] {
+  stroke: var(--color) !important;
+}
