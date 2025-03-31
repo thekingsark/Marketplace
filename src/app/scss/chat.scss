@@ -1,0 +1,64 @@
+@use './abstract' as *;
+
+.EmojiPickerReact * {
+	font-family: $nunitoSans !important;
+}
+
+.emoji {
+	font-size: 2rem;
+}
+
+.EmojiPickerReact.epr-dark-theme {
+	--epr-text-color: var(--font_1) !important;
+	--epr-bg-color: var(--background_2) !important;
+	--epr-hover-bg-color: var(--background_3) !important;
+	--epr-dark-category-label-bg-color: var(--background_2) !important;
+	--epr-dark-search-input-bg-color: var(--background_4) !important;
+	--epr-dark-search-input-bg-color-active: var(--background_4) !important;
+	--epr-dark-picker-border-color: var(--separator) !important;
+}
+
+.message-container {
+	padding: 8px 16px;
+	background-color: var(--background_2);
+	margin-top: 8px;
+	color: var(--font_1);
+	display: inline-flex;
+	flex-direction: column;
+}
+
+.message-sender-picture-container {
+	height: 41px;
+	width: 41px;
+	border-radius: 50%;
+	padding: 1px;
+	background: var(--separator);
+}
+
+.message-date-container {
+	font-size: 14px;
+	margin-left: 20px;
+}
+
+html[dir='rtl'] .message-date-container {
+	margin-left: 0;
+	margin-right: 20px;
+}
+
+.message-text {
+	word-break: break-word;
+}
+
+.message-sender-name {
+	color: var(--font_1);
+	font-weight: 600;
+}
+
+.chat-window-auctions {
+	display: flex;
+	border-bottom: 1px solid var(--separator);
+	padding: 8px;
+	overflow: scroll;
+	gap: 8px;
+	min-height: 76px;
+}
