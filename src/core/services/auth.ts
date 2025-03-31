@@ -1,3 +1,13 @@
+"use client";
+
+import { useState } from "react";
+
+export default function MyComponent() {
+  const [state, setState] = useState("");
+
+  return <></>;
+}
+
 import { firebaseConfig } from '@/firebase'
 import { initializeApp, getApps, FirebaseOptions } from 'firebase/app'
 import {
