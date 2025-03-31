@@ -1,69 +1,185 @@
-"use client"
+'use client'
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
-import type { User } from "firebase/auth"
-import { AuthService } from "@/services/auth-service"
+import firebase from '@/firebase'
+import { initializeApp, getApps, FirebaseOptions } from 'firebase/app'
+import {
+  FacebookAuthProvider,
+  getAuth,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signOut,
+  User,
+  sendPasswordResetEmail,
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
+  PhoneAuthProvider,
+  signInWithCredential,
+} from 'firebase/auth'
+import { BiddoSettings } from '../domain/settings'
 
-interface AuthContextType {
-  user: User | null
-  loading: boolean
-  error: string | null
-  logout: () => Promise<boolean>
-}
+class AuthService {
+  private googleProvider = new GoogleAuthProvider()
+  private facebookProvider = new FacebookAuthProvider()
+  private firebaseUnsub!: () => void
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  loading: true,
-  error: null,
-  logout: async () => false,
-})
+  private verificationId: string | null = null
+  private usedPhoneNumber: string | null = null
 
-export const useAuth = () => useContext(AuthContext)
+  constructor() {
+    if (!getApps().length) {
+      initializeApp(firebaseConfig as FirebaseOptions)
+    }
+  }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  public signInWithGoogle = async () => {
+    await signInWithPopup(getAuth(), this.googleProvider)
+  }
 
-  useEffect(() => {
-    const setupAuth = async () => {
-      try {
-        // Initialize Firebase auth with error handling
-        const initialized = await AuthService.initializeAuth()
-        if (!initialized) {
-          setError("Firebase authentication could not be initialized. Using default configuration for development.")
-          setLoading(false)
-          return
-        }
+  public signInWithFacebook = async () => {
+    await signInWithPopup(getAuth(), this.facebookProvider)
+  }
 
-        // Set up auth state listener
-        await AuthService.getAuthUser((authUser) => {
-          setUser(authUser)
-          setLoading(false)
-        })
-      } catch (error) {
-        console.error("Auth setup error:", error)
-        setError("Authentication service error. Please check the console for details.")
-        setLoading(false)
-      }
+  public signInWithEmailAndPassword = (email: string, password: string) => {
+    return signInWithEmailAndPassword(getAuth(), email, password)
+  }
+
+  validatePhoneNumber = async (phoneNumber: string, captchaId: string) => {
+    const auth = getAuth()
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, captchaId, {
+      size: 'invisible',
+    })
+
+    const confirmationResult = await signInWithPhoneNumber(
+      auth,
+      phoneNumber,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      window.recaptchaVerifier as RecaptchaVerifier
+    )
+    this.verificationId = confirmationResult.verificationId
+    return confirmationResult.verificationId
+  }
+
+  userHasPhoneNumber = () => {
+    const currentUser = getAuth().currentUser
+    return currentUser?.phoneNumber !== null
+  }
+
+  userHasEmailVerified = async (settings: BiddoSettings) => {
+    if (!settings.emailValidationEnabled) {
+      return true
     }
 
-    setupAuth()
-
-    return () => {
-      AuthService.unsubAuthUser()
+    const currentUser = getAuth().currentUser
+    if (!currentUser) {
+      return false
     }
-  }, [])
+    return currentUser.emailVerified
+  }
 
-  const logout = async () => {
+  submitPhoneNumberOtp = (code: string) => {
+    if (!this.verificationId || !code) {
+      return
+    }
+
+    return this.signInWithPhoneNumber(this.verificationId, code)
+  }
+
+  signInWithPhoneNumber = async (verificationId: string, code: string) => {
     try {
-      return await AuthService.logout()
+      const credential = PhoneAuthProvider.credential(verificationId, code)
+      const result = await signInWithCredential(getAuth(), credential)
+      return result.user
+    } catch (e) {
+      console.error('Error signing in with phone number:', e)
+      throw e
+    }
+  }
+
+  public async logout() {
+    await signOut(getAuth())
+    return true
+  }
+
+  public unsubAuthUser(): void {
+    if (this.firebaseUnsub) {
+      this.firebaseUnsub()
+    }
+  }
+
+  public getAuthUser = async (callback: (authUser: User | null) => void) => {
+    this.firebaseUnsub = onAuthStateChanged(getAuth(), callback)
+  }
+
+  public getAuthUserAsync(): Promise<User | null> {
+    return new Promise((resolve) => {
+      this.getAuthUser(resolve)
+    })
+  }
+
+  public signUp = async (email: string, password: string) => {
+    try {
+      const auth = getAuth()
+      const result = await createUserWithEmailAndPassword(auth, email, password)
+
+      try {
+        await sendEmailVerification(result.user)
+      } catch (error) {
+        console.error('Error sending email verification', error)
+      }
+
+      return true
     } catch (error) {
-      console.error("Logout error:", error)
+      if ((error as Error).message.indexOf('auth/email-already-in-use') !== -1) {
+        return 'auth/email-already-in-use'
+      }
+
       return false
     }
   }
 
-  return <AuthContext.Provider value={{ user, loading, error, logout }}>{children}</AuthContext.Provider>
+  public reloadAuthUser() {
+    try {
+      return getAuth().currentUser?.reload()
+    } catch (error) {
+      console.error('Error reloading user', error)
+      return null
+    }
+  }
+
+  // Not used in the app, but it might be useful for you
+  public async sendPasswordResetEmail(email: string) {
+    try {
+      await sendPasswordResetEmail(getAuth(), email)
+      return true
+    } catch (error) {
+      console.error('Error sending password reset email', error)
+      return false
+    }
+  }
+
+  // Not used in the app, but it might be useful for you
+  public async resendEmailVerification() {
+    try {
+      const currentUser = getAuth().currentUser
+      if (!currentUser) {
+        return false
+      }
+
+      await sendEmailVerification(currentUser)
+      return true
+    } catch (error) {
+      console.error('Error resending email verification', error)
+      return false
+    }
+  }
 }
 
+const authService = new AuthService()
+export { authService as AuthService }
