@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useState } from 'react'
 import { IntroCategoriesPreferencesModal } from './preferences'
 import { HowItWorksModal } from './how-it-works'
