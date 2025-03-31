@@ -1,5 +1,4 @@
 'use client'
-
 import firebase from '@/firebase'
 import { initializeApp, getApps, FirebaseOptions } from 'firebase/app'
 import {
